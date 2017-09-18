@@ -17,8 +17,8 @@ app.use(bodyParser.json());
 var port     = process.env.PORT || 8080; // set our port
 
 var mongoose   = require('mongoose');
-mongoose.connect('mongodb://node:node@novus.modulusmongo.net:27017/Iganiq8o'); // connect to our database
-var Bear     = require('./app/models/bear');
+mongoose.connect('mongodb://127.0.0.1:27017/beers'); // connect to our database
+var Beer     = require('./app/models/beer');
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -29,71 +29,74 @@ var router = express.Router();
 // middleware to use for all requests
 router.use(function(req, res, next) {
 	// do logging
-	console.log('Something is happening.');
+	console.log('A magica esta acontecendo');
 	next();
 });
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
-	res.json({ message: 'hooray! welcome to our api!' });	
+	res.json({ message: 'Bem vindo a api do sabatine' });
 });
 
 // on routes that end in /bears
 // ----------------------------------------------------
-router.route('/bears')
+router.route('/beers')
 
 	// create a bear (accessed at POST http://localhost:8080/bears)
 	.post(function(req, res) {
-		
-		var bear = new Bear();		// create a new instance of the Bear model
-		bear.name = req.body.name;  // set the bears name (comes from the request)
 
-		bear.save(function(err) {
+		var beer = new Beer();		// create a new instance of the Bear model
+		beer.name = req.body.name;  // set the bears name (comes from the request)
+		beer.price = req.body.price;
+		beer.size = req.body.size;
+		console.log(req.body);
+		beer.save(function(err) {
 			if (err)
 				res.send(err);
 
-			res.json({ message: 'Bear created!' });
+			res.json({ message: 'Beer created!' });
 		});
 
-		
+
 	})
 
 	// get all the bears (accessed at GET http://localhost:8080/api/bears)
 	.get(function(req, res) {
-		Bear.find(function(err, bears) {
+		Beer.find(function(err, beers) {
 			if (err)
 				res.send(err);
 
-			res.json(bears);
+			res.json(beers);
 		});
 	});
 
 // on routes that end in /bears/:bear_id
 // ----------------------------------------------------
-router.route('/bears/:bear_id')
+router.route('/beers/:beer_id')
 
 	// get the bear with that id
 	.get(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
+		Beer.findById(req.params.beer_id, function(err, beer) {
 			if (err)
 				res.send(err);
-			res.json(bear);
+			console.log(beer);
+			res.json(beer);
 		});
 	})
 
 	// update the bear with this id
 	.put(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
+		Beer.findById(req.params.beer_id, function(err, bear) {
 
 			if (err)
 				res.send(err);
 
-			bear.name = req.body.name;
-			bear.save(function(err) {
+			beer.name = req.body.name;
+			beer.save(function(err) {
 				if (err)
 					res.send(err);
 
-				res.json({ message: 'Bear updated!' });
+				res.json({ message: 'Beer updated!' });
 			});
 
 		});
@@ -101,9 +104,9 @@ router.route('/bears/:bear_id')
 
 	// delete the bear with this id
 	.delete(function(req, res) {
-		Bear.remove({
-			_id: req.params.bear_id
-		}, function(err, bear) {
+		Beer.remove({
+			_id: req.params.beer_id
+		}, function(err, beer) {
 			if (err)
 				res.send(err);
 
@@ -118,4 +121,4 @@ app.use('/api', router);
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('API do batine na porta ' + port);
